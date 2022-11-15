@@ -3,8 +3,6 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { Readable } from "stream";
 import fs from "fs";
-import axios from "axios";
-import { GoogleAuth } from "google-auth-library";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,11 +21,6 @@ export const authenticateGoogle = () => {
 };
 
 export const uploadToGoogleDrive = async (files, auth, email, id, folderId) => {
-  // const fileMetadata = {
-  //   name: file.originalname,
-  //   parents: ["1nGcz-RQKk1U9-xXUZI1jUxxsRYMISNBg"], // Change it according to your desired parent folder id
-  // };
-
   let buffetToStream = (buffer) => {
     const stream = new Readable();
     stream.push(buffer);
@@ -42,7 +35,6 @@ export const uploadToGoogleDrive = async (files, auth, email, id, folderId) => {
   };
   const media = {
     mimeType: files.mimetype,
-    // body: fs.createReadStream("files.buffer"),
     body: buffetToStream(files.buffer),
   };
   try {
@@ -50,7 +42,6 @@ export const uploadToGoogleDrive = async (files, auth, email, id, folderId) => {
       resource: fileMetadata,
       media: media,
     });
-    // console.log("File Id:", file);
     return file.data;
   } catch (error) {
     console.log(error);
@@ -72,7 +63,6 @@ export const createDriveFolder = async (id, auth) => {
     console.log("Folder Id:", file.data.id);
     return file.data.id;
   } catch (err) {
-    // TODO(developer) - Handle error
     throw err;
   }
 };
@@ -86,9 +76,7 @@ export const findUserDriveFolder = async (id, email, auth) => {
       q: `name contains '${id}' and mimeType != 'application/vnd.google-apps.folder'`,
     });
     Array.prototype.push.apply(files, res.files);
-    res.data.files.forEach(function (file) {
-      // console.log("Found file:", file);
-    });
+    res.data.files.forEach(function (file) {});
     return res.data.files;
   } catch (err) {
     console.log(err);
@@ -100,14 +88,6 @@ export const downloadFromDrive = async (fileId, auth) => {
   const service = google.drive({ version: "v3", auth });
 
   try {
-    // const file = await service.files.get(
-    //   {
-    //     fileId: fileId,
-    //   },
-    //   { responseType: "stream" }
-    // );
-    // console.log("file", file);
-    // return file;
     await service.permissions.create({
       fileId: fileId,
       requestBody: {
@@ -115,11 +95,6 @@ export const downloadFromDrive = async (fileId, auth) => {
         type: "anyone",
       },
     });
-
-    /* 
-    webViewLink: View the file in browser
-    webContentLink: Direct download link 
-    */
     const result = await service.files.get({
       fileId: fileId,
       fields: "webViewLink, webContentLink",

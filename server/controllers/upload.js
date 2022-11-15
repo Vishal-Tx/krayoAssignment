@@ -8,9 +8,6 @@ import {
 import User from "../models/user.js";
 
 export const auth = async (req, res, next) => {
-  //   console.log("req.headersupload", req.headers);
-  //   console.log("req.body", req.body);
-  //   console.log("1234");
   try {
     const token = req.headers.authorization.split(" ")[1];
 
@@ -25,26 +22,13 @@ export const auth = async (req, res, next) => {
 };
 
 export const getuploadData = async (req, res) => {
-  // console.log("req.user", req.user);
   const { email, id: _id } = req.user;
 
   const existingUser = await User.findOne({ _id });
 
   const auth = authenticateGoogle();
-  // console.log("auth", auth);
-  // console.log("existingUser._id", existingUser._id.valueOf());
   const id = existingUser?._id.valueOf();
   const data = await findUserDriveFolder(id, email, auth);
-  // console.log("folderData", data);
-  // data.map((da) => {
-  //   console.log(da.name.substring(24));
-  // });
-  // existingUser.uploads.map(upload=>{
-  //   data.forEach(da=>{
-  //     if(upload.name===da.name.substring(24))
-  //     upload.fileId =
-  //   })
-  // })
 
   res.status(200).json({ existingUser });
 };
@@ -85,6 +69,7 @@ export const uploadFiles = async (req, res) => {
     return res.status(200).json({ existingUser });
   } catch (error) {
     console.log(error);
+    res.status(400).json({ message: "Something went wrong. Try Again" });
   }
 };
 
@@ -96,5 +81,7 @@ export const downloadFile = async (req, res) => {
     const { webContentLink } = await downloadFromDrive(fileId, auth);
     console.log("download", webContentLink);
     return res.status(200).json({ webContentLink });
-  } catch (error) {}
+  } catch (error) {
+    res.status(400).json({ message: "Something went wrong. Try Again" });
+  }
 };
