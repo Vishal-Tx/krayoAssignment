@@ -5,5 +5,5 @@ You can download the files uploaded by you.
 
 ###Screenshots:
 ![ScreenShot](Screenshots/Preview0.PNG)
-![ScreenShot](Screenshots/Preview1.PNG)
-![ScreenShot](Screenshots/Preview1.PNG)
+![ScreenShot2](Screenshots/Preview1.PNG)
+![ScreenShot3](Screenshots/Preview2.PNG)
