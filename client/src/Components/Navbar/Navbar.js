@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LogOut } from "../../features/auth/authSlice";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const Navbar = () => {
     dispatch(LogOut());
 
     navigate("/");
+    toast("GoodBye!");
   };
   // console.log("user", user);
   return (

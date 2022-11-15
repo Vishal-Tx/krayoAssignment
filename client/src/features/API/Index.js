@@ -41,10 +41,11 @@ export const uploadFiles = async (files) => {
   }
 };
 
-export const downloadFile = async (name, fileId, folderId) => {
+export const downloadFile = async (fileId) => {
   try {
-    const { data } = await API.post("/upload/download", name, fileId, folderId);
+    const { data } = await API.post("/upload/download", fileId);
     console.log("downloadFileData", data);
+    return data;
   } catch (error) {
     console.log(error);
   }

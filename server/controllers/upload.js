@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import {
   authenticateGoogle,
+  downloadFromDrive,
   findUserDriveFolder,
   uploadToGoogleDrive,
 } from "../gCloud/index.js";
@@ -30,10 +31,11 @@ export const getuploadData = async (req, res) => {
   const existingUser = await User.findOne({ _id });
 
   const auth = authenticateGoogle();
+  // console.log("auth", auth);
   // console.log("existingUser._id", existingUser._id.valueOf());
   const id = existingUser?._id.valueOf();
   const data = await findUserDriveFolder(id, email, auth);
-  console.log("folderData", data);
+  // console.log("folderData", data);
   // data.map((da) => {
   //   console.log(da.name.substring(24));
   // });
@@ -86,6 +88,13 @@ export const uploadFiles = async (req, res) => {
   }
 };
 
-export const downloadFile = (req, res)=>{
-  
-}
+export const downloadFile = async (req, res) => {
+  console.log("body", req.body);
+  const { name: fileName, fileId } = req.body;
+  try {
+    const auth = authenticateGoogle();
+    const { webContentLink } = await downloadFromDrive(fileId, auth);
+    console.log("download", webContentLink);
+    return res.status(200).json({ webContentLink });
+  } catch (error) {}
+};

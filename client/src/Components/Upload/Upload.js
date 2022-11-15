@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  downloadFile,
-  uploadAuth,
-  uploadFiles,
-} from "../../features/API/Index";
+import { uploadAuth, uploadFiles } from "../../features/API/Index";
+import UploadFIle from "./UploadFile/UploadFIle";
+import { toast } from "react-toastify";
+import ReactLoading from "react-loading";
 
 const Upload = () => {
   const navigate = useNavigate();
@@ -30,20 +29,19 @@ const Upload = () => {
     fetchUser();
   }, [navigate, user]);
 
-  // console.log("userData", userData);
+  console.log("userData", userData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    // console.log("files", files);
 
     let formData = new FormData();
     for (let file in files) {
       formData.append("fileUpload", files[file]);
     }
 
-    // console.log("formData", formData);
     const { existingUser: data } = await uploadFiles(formData);
+    toast.success(`File Uploaded Successfully!`, { theme: "colored" });
     console.log("data", data);
     setUserData(data);
     setIsLoading(false);
@@ -63,22 +61,18 @@ const Upload = () => {
     setFiles(fData);
   };
 
-  const handleDownload = async (name, fileId) => {
-    try {
-      const data = await downloadFile(name, fileId, user.folderId);
-      console.log("dFile", data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return isLoading ? (
-    "Loading..."
+    <div className=" flex justify-center mt-40 ">
+      <ReactLoading
+        type="bubbles"
+        color="rgb(34 211 238)"
+        height={80}
+        width={80}
+      />
+    </div>
   ) : (
     <div>
-      <p>{userData.name}</p>
-      <p>{userData.email}</p>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex justify-center mt-10">
         <input
           id="fileUpload"
           name="fileUpload"
@@ -89,26 +83,21 @@ const Upload = () => {
           onChange={handleChange}
           required
         />
-        <button>Upload</button>
+        <button className="bg-cyan-400 rounded p-3 hover:bg-cyan-600 active:bg-cyan-800">
+          Upload
+        </button>
       </form>
 
       {userData.uploads ? (
-        <div>
-          {userData.uploads.map((file, index) => {
-            return (
-              <p
-                key={index}
-                onClick={() => {
-                  handleDownload(file.name, file.fileId);
-                }}
-              >
-                {file.name}
-              </p>
-            );
-          })}
+        <div className="grid max-[650px]:grid-cols-1 max-[1200px]:grid-cols-2 grid-cols-4 gap-4 mt-10 mx-4">
+          {userData.uploads.map((file, index) => (
+            <UploadFIle key={index} file={file} />
+          ))}
         </div>
       ) : (
-        "loading"
+        <div className=" flex justify-center mt-20">
+          <ReactLoading type="bubbles" color="blue" height={60} width={60} />
+        </div>
       )}
     </div>
   );

@@ -4,6 +4,7 @@ import { dirname } from "path";
 import { Readable } from "stream";
 import fs from "fs";
 import axios from "axios";
+import { GoogleAuth } from "google-auth-library";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,7 +12,12 @@ const __dirname = dirname(__filename);
 export const authenticateGoogle = () => {
   const auth = new google.auth.GoogleAuth({
     keyFile: `${__dirname}/krayoassignment-368315-0895206469a9.json`,
-    scopes: "https://www.googleapis.com/auth/drive",
+    scopes: [
+      "https://www.googleapis.com/auth/drive",
+      "https://www.googleapis.com/auth/drive.metadata.readonly",
+      "https://www.googleapis.com/auth/drive.file",
+      "https://www.googleapis.com/auth/drive.appdata",
+    ],
   });
   return auth;
 };
@@ -81,7 +87,7 @@ export const findUserDriveFolder = async (id, email, auth) => {
     });
     Array.prototype.push.apply(files, res.files);
     res.data.files.forEach(function (file) {
-      console.log("Found file:", file.name, file.id);
+      // console.log("Found file:", file);
     });
     return res.data.files;
   } catch (err) {
@@ -89,3 +95,63 @@ export const findUserDriveFolder = async (id, email, auth) => {
     throw err;
   }
 };
+
+export const downloadFromDrive = async (fileId, auth) => {
+  const service = google.drive({ version: "v3", auth });
+
+  try {
+    // const file = await service.files.get(
+    //   {
+    //     fileId: fileId,
+    //   },
+    //   { responseType: "stream" }
+    // );
+    // console.log("file", file);
+    // return file;
+    await service.permissions.create({
+      fileId: fileId,
+      requestBody: {
+        role: "reader",
+        type: "anyone",
+      },
+    });
+
+    /* 
+    webViewLink: View the file in browser
+    webContentLink: Direct download link 
+    */
+    const result = await service.files.get({
+      fileId: fileId,
+      fields: "webViewLink, webContentLink",
+    });
+    console.log("result.data", result.data);
+    return result.data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
+
+// export const downloadFromDrive = async (fileName, fileId, folderId, aut) => {
+//   // Get credentials and build service
+//   // TODO (developer) - Use appropriate auth mechanism for your app
+//   console.log("dsfre");
+
+//   const auth = new GoogleAuth({
+//     scopes: "https://www.googleapis.com/auth/drive",
+//   });
+//   const service = google.drive({ version: "v3", aut });
+
+//   try {
+//     const file = await service.files.get({
+//       fileId: fileId,
+//       alt: "media",
+//     });
+//     console.log(file.status);
+//     return file.status;
+//   } catch (err) {
+//     // TODO(developer) - Handle error
+//     console.log(err);
+//     throw err;
+//   }
+// };
