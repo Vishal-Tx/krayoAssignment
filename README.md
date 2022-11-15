@@ -1,3 +1,3 @@
 # krayoAssignment
 
-[Contribution guidelines for this project](Screeshots/Preview0.png)
+[Image](Screeshots/Preview0.PNG)
