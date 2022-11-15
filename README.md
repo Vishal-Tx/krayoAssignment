@@ -1,4 +1,4 @@
 # krayoAssignment
 
-[Image](Screeshots/Preview0.PNG)
-![ScreenShot](Screeshots/Preview0.PNG)
+[Image](Screenshots/Preview0.PNG)
+![ScreenShot](Screenshots/Preview0.PNG)
