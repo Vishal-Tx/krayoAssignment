@@ -1,3 +1,3 @@
 # krayoAssignment
 
-(Secrreshots/Preview0.PNG)
+(Screeshots/Preview0.PNG)
