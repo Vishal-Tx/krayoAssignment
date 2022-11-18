@@ -22,15 +22,21 @@ export const auth = async (req, res, next) => {
 };
 
 export const getuploadData = async (req, res) => {
-  const { email, id: _id } = req.user;
+  try {
+    const { email, id: _id } = req.user;
 
-  const existingUser = await User.findOne({ _id });
+    const existingUser = await User.findOne({ _id });
 
-  const auth = authenticateGoogle();
-  const id = existingUser?._id.valueOf();
-  const data = await findUserDriveFolder(id, email, auth);
+    if (!existingUser) return res.status(404).send("No User Found");
 
-  res.status(200).json({ existingUser });
+    const auth = authenticateGoogle();
+    const id = existingUser?._id.valueOf();
+    const data = await findUserDriveFolder(id, email, auth);
+
+    return res.status(200).json({ existingUser });
+  } catch (error) {
+    return res.status(400).json({ message: "Something went wrong." });
+  }
 };
 
 export const uploadFiles = async (req, res) => {
@@ -44,6 +50,7 @@ export const uploadFiles = async (req, res) => {
     console.log("req.files", req.files);
 
     const existingUser = await User.findOne({ email });
+    if (!existingUser) return res.status(404).send("No User Found");
     const auth = authenticateGoogle();
     for (let file in req.files) {
       let response = await uploadToGoogleDrive(
