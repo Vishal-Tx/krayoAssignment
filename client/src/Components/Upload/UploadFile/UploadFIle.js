@@ -9,22 +9,33 @@ import unknown from "../../../assets/unknown.png";
 import * as dayjs from "dayjs";
 import { toast } from "react-toastify";
 
-const UploadFIle = ({ file }) => {
+const UploadFIle = ({ file, setIsLoading }) => {
   console.log("file", file);
   const handleDownload = async (fileId, fileName) => {
     try {
-      console.log("fileId", fileId);
+      // console.log("fileId", fileId);
+      setIsLoading(true);
       const dData = {
         fileId,
         fileName,
       };
-      const data = await downloadFile(dData);
-      window.open(data.webContentLink);
-      toast.success(`File Downloaded Successfully!`, { theme: "colored" });
-      console.log("dFile", data);
+      const { result } = await downloadFile(dData);
+      // window.open(data.webContentLink);
+      if (result) {
+        toast.success(`File Downloaded Successfully at ${result}`, {
+          theme: "colored",
+          autoClose: 6000,
+        });
+      } else {
+        toast.error("something went wrong.Please try Again!");
+      }
+      setIsLoading(false);
+      console.log("dFile", result);
     } catch (error) {
       console.log(error);
-      toast.error("Something Went Wrong");
+      toast.error("Something Went Wrong", {
+        autoClose: 3000,
+      });
     }
   };
   let img;
@@ -75,13 +86,15 @@ const UploadFIle = ({ file }) => {
 
   return (
     <div
-      className="shadow-lg hover:shadow-2xl border-2 h-auto p-3"
+      className="shadow-lg hover:shadow-2xl border-2  p-3"
       onClick={() => {
         handleDownload(file.fileId, file.name);
       }}
     >
-      <img src={img} alt="..." className="w-56 h-40 mx-auto pb-3"></img>
-      <p className="">{file.name}</p>
+      <img src={img} alt="..." className="w-20 h-20 mx-auto pb-3"></img>
+      <p className="truncate" title={file.name}>
+        {file.name}
+      </p>
       <p className="font-semibold">size: {size}</p>
       <p className="font-medium">
         Uploaded At:{" "}

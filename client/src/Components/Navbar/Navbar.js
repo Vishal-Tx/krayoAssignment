@@ -19,7 +19,7 @@ const Navbar = () => {
     dispatch(LogOut());
 
     navigate("/");
-    toast("GoodBye!");
+    toast("GoodBye!", { autoClose: 2000 });
   };
   // console.log("user", user);
   return (

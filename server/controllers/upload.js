@@ -82,12 +82,14 @@ export const uploadFiles = async (req, res) => {
 
 export const downloadFile = async (req, res) => {
   console.log("body", req.body);
-  const { name: fileName, fileId } = req.body;
+  const { fileName, fileId } = req.body;
   try {
     const auth = authenticateGoogle();
-    const { webContentLink } = await downloadFromDrive(fileId, auth);
-    console.log("download", webContentLink);
-    return res.status(200).json({ webContentLink });
+    // const { webContentLink } = await downloadFromDrive(fileId, auth);
+    const result = await downloadFromDrive(fileId, fileName, auth);
+    console.log("Dresult", result);
+    // console.log("download", webContentLink);
+    return res.status(200).json({ result });
   } catch (error) {
     res.status(400).json({ message: "Something went wrong. Try Again" });
   }

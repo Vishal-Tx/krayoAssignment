@@ -19,7 +19,10 @@ const Home = () => {
     console.log("authData", result);
     if (result) {
       navigate(`/upload`);
-      toast.success(`Welcome ${result.name}! `, { theme: "colored" });
+      toast.success(`Welcome ${result.name}! `, {
+        theme: "colored",
+        autoClose: 3000,
+      });
     }
   };
   return (
@@ -32,7 +35,7 @@ const Home = () => {
           onSuccess={googleSuccess}
           onError={() => {
             console.log("Login Failed");
-            toast.error(`Try Again! `, { theme: "colored" });
+            toast.error(`Try Again! `, { theme: "colored", autoClose: 3000 });
             navigate("/");
           }}
         />
