@@ -129,7 +129,6 @@ export const downloadFromDrive = async (fileId, fileName, auth) => {
           const filePath = path.join(`${os.homedir()}/Downloads`, fileName);
           console.log(`writing to ${filePath}`);
           const dest = fs.createWriteStream(filePath);
-          let progress = 0;
 
           res.data
             .on("end", () => {
@@ -140,14 +139,7 @@ export const downloadFromDrive = async (fileId, fileName, auth) => {
               console.error("Error downloading file.");
               reject(err);
             })
-            .on("data", (d) => {
-              progress += d.length;
-              if (process.stdout.isTTY) {
-                process.stdout.clearLine();
-                process.stdout.cursorTo(0);
-                process.stdout.write(`Downloaded ${progress} bytes`);
-              }
-            })
+
             .pipe(dest);
         });
       });

@@ -36,6 +36,7 @@ const UploadFIle = ({ file, setIsLoading }) => {
       toast.error("Something Went Wrong", {
         autoClose: 3000,
       });
+      setIsLoading(false);
     }
   };
   let img;
